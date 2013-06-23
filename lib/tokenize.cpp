@@ -8593,6 +8593,8 @@ void Tokenizer::simplifyStructDecl()
                 continue;
             skip.push(false);
             tok = next->link();
+            if (!tok)
+                break; // see #4869 segmentation fault in Tokenizer::simplifyStructDecl (invalid code)
             restart = next;
 
             // check for named type
@@ -8604,6 +8606,8 @@ void Tokenizer::simplifyStructDecl()
                     tok = tok->next();
                     start->deleteThis();
                 }
+                if (!tok)
+                    break; // see #4869 segmentation fault in Tokenizer::simplifyStructDecl (invalid code)
                 tok->insertToken(type->str());
                 if (start->str() != "class")
                     tok->insertToken(start->str());
