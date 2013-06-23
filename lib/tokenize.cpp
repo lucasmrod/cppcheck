@@ -3487,7 +3487,6 @@ bool Tokenizer::simplifyTokenList()
     simplifyIfNot();
     simplifyIfNotNull();
     simplifyIfSameInnerCondition();
-    simplifyForWithOnlyInitAndCond();
     simplifyComparisonOrder();
     simplifyNestedStrcat();
     simplifyWhile0();
@@ -5943,7 +5942,7 @@ bool Tokenizer::simplifyKnownVariables()
                 tok = tok->previous();
                 goback = false;
             }
-            if (tok->isName() && (Token::Match(tok, "static| const| static| %type% const| %var% = %any% ;") || 
+            if (tok->isName() && (Token::Match(tok, "static| const| static| %type% const| %var% = %any% ;") ||
                                   Token::Match(tok, "static| const| static| %type% const| %var% ( %any% ) ;"))) {
                 bool isconst = false;
                 for (const Token *tok2 = tok; (tok2->str() != "=") && (tok2->str() != "("); tok2 = tok2->next()) {
@@ -8478,32 +8477,6 @@ void Tokenizer::simplifyWhile0()
             end = end->next()->link();
             tok = tok->previous();
             eraseDeadCode(tok, end->next());
-        }
-    }
-}
-
-void Tokenizer::simplifyForWithOnlyInitAndCond()
-{
-    for (Token *tok = list.front(); tok; tok = tok->next()) {
-        // for ( statement1 ; statement2 ; statement3 )
-        if (Token::Match(tok, "[{};] for ( %type%| %var% = %num% ; --| %var% --| ; )")) { // for ( statement1; statement2 ; )
-            Token* endParTok = tok->tokAt(2)->link();
-            Token* secondSemicolonTok = endParTok->tokAt(-4);
-            Token* thirdSemicolonTok = endParTok->previous();
-            const bool pre_decrement = (secondSemicolonTok->next()->str() == "--");
-            const std::string varname = (pre_decrement) ? secondSemicolonTok->tokAt(2)->str() : secondSemicolonTok->next()->str();
-            const unsigned int varid = (pre_decrement) ? secondSemicolonTok->tokAt(2)->varId() : secondSemicolonTok->next()->varId();
-
-            // Move the second statement to the third section (after second semicolon)
-            Token::move(secondSemicolonTok->next(), secondSemicolonTok->tokAt(2), thirdSemicolonTok);
-            // insert "%var% >= 0|1" tokens
-            secondSemicolonTok->insertToken((pre_decrement) ? "1" : "0");
-            secondSemicolonTok->insertToken(">=");
-            secondSemicolonTok->insertToken(varname);
-            secondSemicolonTok->next()->varId(varid);
-            // Substract 1 to the initial counter value
-            Token* valTok = secondSemicolonTok->previous();
-            valTok->str(MathLib::longToString(MathLib::toLongNumber(valTok->str()) - 1));
         }
     }
 }

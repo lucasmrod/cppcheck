@@ -324,7 +324,6 @@ private:
         TEST_CASE(while0);
         // ticket #3140
         TEST_CASE(while0for);
-        TEST_CASE(simplifyForWithoutThirdStatement);
         TEST_CASE(while1);
 
         TEST_CASE(enum1);
@@ -6908,24 +6907,6 @@ private:
         ASSERT_EQUALS("void f ( ) { }", tok("void f() { for (unsigned int i = 0; i < 0; i++) { a; } }"));
         ASSERT_EQUALS("void f ( ) { }", tok("void f() { for (long long i = 0; i < 0; i++) { a; } }"));
         ASSERT_EQUALS("void f ( ) { }", tok("void f() { for (signed long long i = 0; i < 0; i++) { a; } }"));
-    }
-
-    void simplifyForWithoutThirdStatement() {
-        {
-            const char code[] = "void f() { for(int i = 2; i--;) { } }";
-            const char expected[] = "void f ( ) { for ( int i = 1 ; 0 <= i ; i -- ) { } }";
-            ASSERT_EQUALS(expected, tok(code));
-        }
-        {
-            const char code[] = "void f() { for(unsigned long int i = 3; --i;) { } }";
-            const char expected[] = "void f ( ) { for ( long i = 2 ; 1 <= i ; -- i ) { } }";
-            ASSERT_EQUALS(expected, tok(code));
-        }
-        {
-            const char code[] = "void f() { int i ; for(i = 3; i--;) { } }";
-            const char expected[] = "void f ( ) { int i ; for ( i = 2 ; 0 <= i ; i -- ) { } }";
-            ASSERT_EQUALS(expected, tok(code));
-        }
     }
 
     void while1() {
