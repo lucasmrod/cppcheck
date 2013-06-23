@@ -512,6 +512,11 @@ public:
     void simplifyWhile0();
 
     /**
+     * simplify "for (a;b;)" to "for (a;b;c)"
+     */
+    void simplifyForWithOnlyInitAndCond();
+
+    /**
      * Simplify while(func() && errno==EINTR)
      */
     void simplifyErrNoInWhile();
