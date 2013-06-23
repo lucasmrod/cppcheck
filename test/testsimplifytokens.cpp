@@ -6913,17 +6913,17 @@ private:
     void simplifyForWithoutThirdStatement() {
         {
             const char code[] = "void f() { for(int i = 2; i--;) { } }";
-            const char expected[] = "void f ( ) { for ( int i = 1 ; i >= 0 ; i -- ) { } }";
+            const char expected[] = "void f ( ) { for ( int i = 1 ; 0 <= i ; i -- ) { } }";
             ASSERT_EQUALS(expected, tok(code));
         }
         {
             const char code[] = "void f() { for(unsigned long int i = 3; --i;) { } }";
-            const char expected[] = "void f ( ) { for ( long i = 2 ; i >= 1 ; -- i ) { } }";
+            const char expected[] = "void f ( ) { for ( long i = 2 ; 1 <= i ; -- i ) { } }";
             ASSERT_EQUALS(expected, tok(code));
         }
         {
             const char code[] = "void f() { int i ; for(i = 3; i--;) { } }";
-            const char expected[] = "void f ( ) { int i ; for ( i = 2 ; i >= 0 ; i -- ) { } }";
+            const char expected[] = "void f ( ) { int i ; for ( i = 2 ; 0 <= i ; i -- ) { } }";
             ASSERT_EQUALS(expected, tok(code));
         }
     }

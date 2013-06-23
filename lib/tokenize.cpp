@@ -3487,10 +3487,10 @@ bool Tokenizer::simplifyTokenList()
     simplifyIfNot();
     simplifyIfNotNull();
     simplifyIfSameInnerCondition();
+    simplifyForWithOnlyInitAndCond();
     simplifyComparisonOrder();
     simplifyNestedStrcat();
     simplifyWhile0();
-    simplifyForWithOnlyInitAndCond();
     simplifyFuncInWhile();
 
     simplifyIfAssign();    // could be affected by simplifyIfNot
@@ -8492,6 +8492,7 @@ void Tokenizer::simplifyForWithOnlyInitAndCond()
             Token* thirdSemicolonTok = endParTok->previous();
             const bool pre_decrement = (secondSemicolonTok->next()->str() == "--");
             const std::string varname = (pre_decrement) ? secondSemicolonTok->tokAt(2)->str() : secondSemicolonTok->next()->str();
+            const unsigned int varid = (pre_decrement) ? secondSemicolonTok->tokAt(2)->varId() : secondSemicolonTok->next()->varId();
 
             // Move the second statement to the third section (after second semicolon)
             Token::move(secondSemicolonTok->next(), secondSemicolonTok->tokAt(2), thirdSemicolonTok);
@@ -8499,6 +8500,7 @@ void Tokenizer::simplifyForWithOnlyInitAndCond()
             secondSemicolonTok->insertToken((pre_decrement) ? "1" : "0");
             secondSemicolonTok->insertToken(">=");
             secondSemicolonTok->insertToken(varname);
+            secondSemicolonTok->next()->varId(varid);
             // Substract 1 to the initial counter value
             Token* valTok = secondSemicolonTok->previous();
             valTok->str(MathLib::longToString(MathLib::toLongNumber(valTok->str()) - 1));

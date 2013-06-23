@@ -33,6 +33,8 @@
 #include <cassert>     // <- assert
 #include <cstdlib>
 
+#include <cstdio>
+
 //---------------------------------------------------------------------------
 
 // Register this check class (by creating a static instance of it)
