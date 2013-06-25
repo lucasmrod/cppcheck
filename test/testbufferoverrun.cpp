@@ -1522,7 +1522,7 @@ private:
               "    int buffer[9];\n"
               "    long int i;\n"
               "    for(i=10; i--;) {\n"
-              "        std::cout << buffer[i] << std::endl;\n"
+              "        buffer[i] = i;\n"
               "    }\n"
               "}");
         ASSERT_EQUALS("[test.cpp:5]: (error) Buffer is accessed out of bounds: buffer\n", errout.str());
