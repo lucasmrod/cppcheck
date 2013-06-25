@@ -319,8 +319,8 @@ static bool for_condition(const Token *tok2, unsigned int varid, std::string &mi
         maxMinFlipped = true;
         max_value = min_value;
         min_value = tok2->str();
-    }  else if (Token::Match(tok2, " %varid% -- ; )", varid) ||
-                Token::Match(tok2, " -- %varid% ; )", varid)) {
+    }  else if (Token::Match(tok2, "%varid% -- ; )", varid) ||
+                Token::Match(tok2, "-- %varid% ; )", varid)) {
         maxMinFlipped = true;
         max_value = min_value;
         min_value = (tok2->str() == "--") ? "1" : "0";
