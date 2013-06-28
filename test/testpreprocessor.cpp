@@ -402,6 +402,9 @@ private:
         ASSERT_EQUALS(" __asm123", preprocessor.removeComments(" __asm123", "3837.cpp"));
         ASSERT_EQUALS("\" __asm { ; } \"", preprocessor.removeComments("\" __asm { ; } \"", "3837.cpp"));
         ASSERT_EQUALS("__asm__ volatile { \"\" }", preprocessor.removeComments("__asm__ volatile { \"\" }", "3837.cpp"));
+
+        // #4873
+        ASSERT_EQUALS("__asm { }", preprocessor.removeComments("__asm { /* This is a comment */ }", "4873.cpp"));
     }
 
 
@@ -3834,7 +3837,7 @@ private:
         settings.addEnabled("all");
         preprocessor.setFile0("test.c");
         ASSERT_EQUALS(false, preprocessor.validateCfg("int a=A;", "A"));
-        ASSERT_EQUALS("[test.c:1]: (information) Skipping configuration 'A' since the value of 'A' is unknown. Use -D if you want to check it. You can use -U to skip it explictly.\n", errout.str());
+        ASSERT_EQUALS("[test.c:1]: (information) Skipping configuration 'A' since the value of 'A' is unknown. Use -D if you want to check it. You can use -U to skip it explicitly.\n", errout.str());
     }
 
     void if_sizeof() { // #4071

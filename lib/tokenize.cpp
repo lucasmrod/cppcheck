@@ -3503,6 +3503,16 @@ bool Tokenizer::simplifyTokenList()
         modified |= simplifyConditions();
         modified |= simplifyFunctionReturn();
         modified |= simplifyKnownVariables();
+
+        // replace strlen(str)
+        for (Token *tok = list.front(); tok; tok = tok->next()) {
+            if (Token::Match(tok, "strlen ( %str% )")) {
+                tok->str(MathLib::longToString(Token::getStrLength(tok->tokAt(2))));
+                tok->deleteNext(3);
+                modified = true;
+            }
+        }
+
         modified |= removeRedundantConditions();
         modified |= simplifyRedundantParentheses();
         modified |= simplifyConstTernaryOp();
@@ -3510,16 +3520,6 @@ bool Tokenizer::simplifyTokenList()
     }
 
     simplifyConditionOperator();
-
-    // replace strlen(str)
-    for (Token *tok = list.front(); tok; tok = tok->next()) {
-        if (Token::Match(tok, "strlen ( %str% )")) {
-            std::ostringstream ostr;
-            ostr << Token::getStrLength(tok->tokAt(2));
-            tok->str(ostr.str());
-            tok->deleteNext(3);
-        }
-    }
 
     // simplify redundant for
     removeRedundantFor();
@@ -6399,9 +6399,9 @@ bool Tokenizer::simplifyKnownVariablesSimplify(Token **tok2, Token *tok3, unsign
         }
 
         // Using the variable in condition..
-        if (Token::Match(tok3->previous(), ("if ( " + structname + " %varid% %comp%|)").c_str(), varid) ||
+        if (Token::Match(tok3->previous(), ("if ( " + structname + " %varid% %cop%|)").c_str(), varid) ||
             Token::Match(tok3, ("( " + structname + " %varid% %comp%").c_str(), varid) ||
-            Token::Match(tok3, ("%comp%|! " + structname + " %varid% %comp%|)|;").c_str(), varid) ||
+            Token::Match(tok3, ("%comp%|!|= " + structname + " %varid% %cop%|)|;").c_str(), varid) ||
             Token::Match(tok3->previous(), "strlen|free ( %varid% )", varid)) {
             if (value[0] == '\"' && tok3->previous()->str() != "strlen") {
                 // bail out if value is a string unless if it's just given
