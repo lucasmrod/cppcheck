@@ -1,6 +1,6 @@
 /*
  * Cppcheck - A tool for static C/C++ code analysis
- * Copyright (C) 2007-2013 Daniel Marjamäki and Cppcheck team.
+ * Copyright (C) 2007-2013 Daniel Marjam?ki and Cppcheck team.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -277,4 +277,49 @@ void CheckSizeof::divideSizeofError(const Token *tok)
                 "divideSizeof", "Division of result of sizeof() on pointer type.\n"
                 "Division of result of sizeof() on pointer type. sizeof() returns the size of the pointer, "
                 "not the size of the memory area it points to.", true);
+}
+
+void CheckSizeof::sizeofVoid()
+{
+    if (!_settings->isEnabled("portability"))
+        return;
+
+    for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next()) {
+        if (Token::simpleMatch(tok, "sizeof ( )")) {        // "sizeof(void)" gets simplified to sizeof ( )
+            sizeofVoidError(tok);
+        } else if (Token::Match(tok, "sizeof ( * %var% )") && // sizeof(*p) where p is of type "void*"
+                   tok->tokAt(3)->variable() &&
+                   (Token::Match(tok->tokAt(3)->variable()->typeStartToken(), "void *")) &&
+                   (tok->tokAt(3)->variable()->typeEndToken()->strAt(-1) != "*")) { // not "void** p;"
+            sizeofDereferencedVoidPointerError(tok, tok->strAt(3));
+        } else if (Token::Match(tok, "%var% +|-") || Token::Match(tok, "+|- %var%") ||  // "p++", "++p", "p--", "--p",
+                   Token::Match(tok, "%var% ++|--") || Token::Match(tok, "++|-- %var%")) { // "p + 4", "4 + p", etc. where p is of type "void*"
+            const unsigned index = ((tok->str() != "+") && (tok->str() != "-")) ? 0 : 1;
+            const Variable* var = tok->tokAt(index)->variable();
+            if (var && Token::Match(var->typeStartToken(), "void *")) {
+                arithOperationsOnVoidPointerError(tok, tok->tokAt(index)->str());
+            }
+        }
+    }
+}
+
+void CheckSizeof::sizeofVoidError(const Token *tok)
+{
+    const std::string message = "There is no standard value for 'sizeof(void)'.";
+    const std::string verbose = "A value for 'sizeof(void)' is only defined as part of a GNU C extension.";
+    reportError(tok, Severity::portability, "sizeofVoid", message + "\n" + verbose, true);
+}
+
+void CheckSizeof::sizeofDereferencedVoidPointerError(const Token *tok, const std::string &varname)
+{
+    const std::string message = "'*" + varname + "' is of type 'void', there is no standard value for sizeof(void).";
+    const std::string verbose = "A value for 'sizeof(void)' is defined only as part of a GNU C extension.";
+    reportError(tok, Severity::portability, "sizeofDereferencedVoidPointer", message + "\n" + verbose, true);
+}
+
+void CheckSizeof::arithOperationsOnVoidPointerError(const Token* tok, const std::string &varname)
+{
+    const std::string message = "Variable '" + varname + "' of type 'void *' used in arithmetic operation.";
+    const std::string verbose = "Arithmetic operations on 'void *' is a GNU C extension.";
+    reportError(tok, Severity::portability, "arithOperationsOnVoidPointer", message + "\n" + verbose, true);
 }
