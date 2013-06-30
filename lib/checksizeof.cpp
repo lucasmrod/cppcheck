@@ -285,16 +285,13 @@ void CheckSizeof::sizeofVoid()
         return;
 
     for (const Token *tok = _tokenizer->tokens(); tok; tok = tok->next()) {
-        if (Token::simpleMatch(tok, "sizeof ( )")) {        // "sizeof(void)" gets simplified to sizeof ( )
+        if (Token::simpleMatch(tok, "sizeof ( )")) { // "sizeof(void)" gets simplified to sizeof ( )
             sizeofVoidError(tok);
-        } else if (Token::Match(tok, "sizeof ( * %var% )") && // sizeof(*p) where p is of type "void*"
-                   tok->tokAt(3)->variable() &&
-                   (Token::Match(tok->tokAt(3)->variable()->typeStartToken(), "void *")) &&
-                   (tok->tokAt(3)->variable()->typeEndToken()->strAt(-1) != "*")) { // not "void** p;"
+        } else if (Token::Match(tok, "sizeof ( * %var% )") && tok->tokAt(3)->variable() &&
+                   (Token::Match(tok->tokAt(3)->variable()->typeStartToken(), "void * !!*"))) { // sizeof(*p) where p is of type "void*"
             sizeofDereferencedVoidPointerError(tok, tok->strAt(3));
-        } else if (Token::Match(tok, "%var% +|-") || Token::Match(tok, "+|- %var%") ||  // "p++", "++p", "p--", "--p",
-                   Token::Match(tok, "%var% ++|--") || Token::Match(tok, "++|-- %var%")) { // "p + 4", "4 + p", etc. where p is of type "void*"
-            const unsigned index = ((tok->str() != "+") && (tok->str() != "-")) ? 0 : 1;
+        } else if (Token::Match(tok, "%var% +|-|++|--") || Token::Match(tok, "+|-|++|-- %var%")) { // Arithmetic operations on variable of type "void*"
+            int index = (tok->isName()) ? 0 : 1;
             const Variable* var = tok->tokAt(index)->variable();
             if (var && Token::Match(var->typeStartToken(), "void *")) {
                 arithOperationsOnVoidPointerError(tok, tok->tokAt(index)->str());

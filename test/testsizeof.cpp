@@ -530,3 +530,4 @@ private:
 };
 
 REGISTER_TEST(TestSizeof)
+
