@@ -495,21 +495,21 @@ private:
         check("void f() {\n"
               "  int size = sizeof(void);\n"
               "}");
-        ASSERT_EQUALS("[test.cpp:2]: (portability, inconclusive) There is no standard value for 'sizeof(void)'.\n", errout.str());
+        ASSERT_EQUALS("[test.cpp:2]: (portability) Behaviour of sizeof(void) is not covered by the ISO C standard.\n", errout.str());
 
         check("void f() {\n"
               "  void* p;\n"
               "  int size = sizeof(*p);\n"
               "}");
-        ASSERT_EQUALS("[test.cpp:3]: (portability, inconclusive) '*p' is of type 'void', there is no standard value for sizeof(void).\n", errout.str());
+        ASSERT_EQUALS("[test.cpp:3]: (portability) '*p' is of type 'void', the behaviour of sizeof(void) is not covered by the ISO C standard.\n", errout.str());
 
         check("void f() {\n"
               "  void* p = malloc(10);\n"
               "  int* p2 = p + 4;\n"
               "  int* p3 = p - 1;\n"
               "}");
-        ASSERT_EQUALS("[test.cpp:3]: (portability, inconclusive) Variable 'p' of type 'void *' used in arithmetic operation.\n"
-                      "[test.cpp:4]: (portability, inconclusive) Variable 'p' of type 'void *' used in arithmetic operation.\n", errout.str());
+        ASSERT_EQUALS("[test.cpp:3]: (portability) 'p' is of type 'void *'. When using void pointers in calculations, the behaviour is undefined.\n"
+                      "[test.cpp:4]: (portability) 'p' is of type 'void *'. When using void pointers in calculations, the behaviour is undefined.\n", errout.str());
 
         check("void f() {\n"
               "  void* p1 = malloc(10);\n"
@@ -517,11 +517,17 @@ private:
               "  p1--;\n"
               "  p2++;\n"
               "}");
-        ASSERT_EQUALS("[test.cpp:4]: (portability, inconclusive) Variable 'p1' of type 'void *' used in arithmetic operation.\n"
-                      "[test.cpp:5]: (portability, inconclusive) Variable 'p2' of type 'void *' used in arithmetic operation.\n", errout.str());
+        ASSERT_EQUALS("[test.cpp:4]: (portability) 'p1' is of type 'void *'. When using void pointers in calculations, the behaviour is undefined.\n"
+                      "[test.cpp:5]: (portability) 'p2' is of type 'void *'. When using void pointers in calculations, the behaviour is undefined.\n", errout.str());
 
         check("void f() {\n"
               "  void** p1;\n"
+              "  int j = sizeof(*p1);\n"
+              "}");
+        ASSERT_EQUALS("", errout.str());
+
+        check("void f() {\n"
+              "  void* p1[5];\n"
               "  int j = sizeof(*p1);\n"
               "}");
         ASSERT_EQUALS("", errout.str());
