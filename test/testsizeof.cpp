@@ -495,13 +495,13 @@ private:
         check("void f() {\n"
               "  int size = sizeof(void);\n"
               "}");
-        ASSERT_EQUALS("[test.cpp:2]: (portability) Behaviour of sizeof(void) is not covered by the ISO C standard.\n", errout.str());
+        ASSERT_EQUALS("[test.cpp:2]: (portability) Behaviour of 'sizeof(void)' is not covered by the ISO C standard.\n", errout.str());
 
         check("void f() {\n"
               "  void* p;\n"
               "  int size = sizeof(*p);\n"
               "}");
-        ASSERT_EQUALS("[test.cpp:3]: (portability) '*p' is of type 'void', the behaviour of sizeof(void) is not covered by the ISO C standard.\n", errout.str());
+        ASSERT_EQUALS("[test.cpp:3]: (portability) '*p' is of type 'void', the behaviour of 'sizeof(void)' is not covered by the ISO C standard.\n", errout.str());
 
         check("void f() {\n"
               "  void* p = malloc(10);\n"

@@ -303,21 +303,21 @@ void CheckSizeof::sizeofVoid()
 
 void CheckSizeof::sizeofVoidError(const Token *tok)
 {
-    const std::string message = "Behaviour of sizeof(void) is not covered by the ISO C standard.";
-    const std::string verbose = "A value for 'sizeof(void)' is only defined as part of a GNU C extension.";
+    const std::string message = "Behaviour of 'sizeof(void)' is not covered by the ISO C standard.";
+    const std::string verbose = message + " A value for 'sizeof(void)' is defined only as part of a GNU C extension, which defines 'sizeof(void)' to be 1.";
     reportError(tok, Severity::portability, "sizeofVoid", message + "\n" + verbose);
 }
 
 void CheckSizeof::sizeofDereferencedVoidPointerError(const Token *tok, const std::string &varname)
 {
-    const std::string message = "'*" + varname + "' is of type 'void', the behaviour of sizeof(void) is not covered by the ISO C standard.";
-    const std::string verbose = "A value for 'sizeof(void)' is defined only as part of a GNU C extension.";
+    const std::string message = "'*" + varname + "' is of type 'void', the behaviour of 'sizeof(void)' is not covered by the ISO C standard.";
+    const std::string verbose = message + " A value for 'sizeof(void)' is defined only as part of a GNU C extension, which defines 'sizeof(void)' to be 1.";
     reportError(tok, Severity::portability, "sizeofDereferencedVoidPointer", message + "\n" + verbose);
 }
 
 void CheckSizeof::arithOperationsOnVoidPointerError(const Token* tok, const std::string &varname)
 {
     const std::string message = "'" + varname + "' is of type 'void *'. When using void pointers in calculations, the behaviour is undefined.";
-    const std::string verbose = "Arithmetic operations on 'void *' is a GNU C extension.";
+    const std::string verbose = message + " Arithmetic operations on 'void *' is a GNU C extension, which defines the 'sizeof(void)' to be 1.";
     reportError(tok, Severity::portability, "arithOperationsOnVoidPointer", message + "\n" + verbose);
 }

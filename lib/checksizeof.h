@@ -127,7 +127,7 @@ private:
                "* look for 'sizeof sizeof ..'\n"
                "* look for calculations inside sizeof()\n"
                "* look for suspicious calculations with sizeof()\n"
-               "* using sizeof(void) which is undefined\n";
+               "* using 'sizeof(void)' which is undefined\n";
     }
 };
 /// @}
