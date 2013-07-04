@@ -5523,4 +5523,7 @@ private:
         TODO_ASSERT_EQUALS("[test.cpp:7]: (error) Return value of allocation function f is not used.\n", "", errout.str());
     }
 };
+
 REGISTER_TEST(TestMemleakNoVar)
+
+
