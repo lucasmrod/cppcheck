@@ -30,9 +30,9 @@ HEADERS += $${BASEPATH}check.h \
            $${BASEPATH}checkunusedfunctions.h \
            $${BASEPATH}checkunusedvar.h \
            $${BASEPATH}cppcheck.h \
-           $${BASEPATH}environment.h \
            $${BASEPATH}errorlogger.h \
            $${BASEPATH}executionpath.h \
+           $${BASEPATH}library.h \
            $${BASEPATH}mathlib.h \
            $${BASEPATH}path.h \
            $${BASEPATH}preprocessor.h \
@@ -70,9 +70,9 @@ SOURCES += $${BASEPATH}check64bit.cpp \
            $${BASEPATH}checkunusedfunctions.cpp \
            $${BASEPATH}checkunusedvar.cpp \
            $${BASEPATH}cppcheck.cpp \
-           $${BASEPATH}environment.cpp \
            $${BASEPATH}errorlogger.cpp \
            $${BASEPATH}executionpath.cpp \
+           $${BASEPATH}library.cpp \
            $${BASEPATH}mathlib.cpp \
            $${BASEPATH}path.cpp \
            $${BASEPATH}preprocessor.cpp \

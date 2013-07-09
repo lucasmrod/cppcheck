@@ -742,6 +742,11 @@ SymbolDatabase::SymbolDatabase(const Tokenizer *tokenizer, const Settings *setti
         for (std::list<Scope>::iterator it = scopeList.begin(); it != scopeList.end(); ++it) {
             scope = &(*it);
 
+            if (!scope->definedType) {
+                _blankTypes.push_back(Type());
+                scope->definedType = &_blankTypes.back();
+            }
+
             if (scope->isClassOrStruct() && scope->definedType->needInitialization == Type::Unknown) {
                 // check for default constructor
                 bool hasDefaultConstructor = false;
@@ -799,7 +804,7 @@ SymbolDatabase::SymbolDatabase(const Tokenizer *tokenizer, const Settings *setti
                     if (scope->definedType->needInitialization == Type::Unknown)
                         unknowns++;
                 }
-            } else if (scope->type == Scope::eUnion && scope->definedType && scope->definedType->needInitialization == Type::Unknown)
+            } else if (scope->type == Scope::eUnion && scope->definedType->needInitialization == Type::Unknown)
                 scope->definedType->needInitialization = Type::True;
         }
 
@@ -2500,7 +2505,7 @@ const Function* SymbolDatabase::findFunction(const Token *tok) const
     }
 
     // check for member function
-    else if (tok->strAt(-1) == ".") {
+    else if (Token::Match(tok->tokAt(-2), "!!this .")) {
         if (Token::Match(tok->tokAt(-2), "%var% .")) {
             const Token *tok1 = tok->tokAt(-2);
 
