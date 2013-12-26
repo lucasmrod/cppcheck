@@ -50,7 +50,7 @@ $ make SRCDIR=build
 ```
 ### * tools/dmake.cpp
 
-Automatically generates the main `Makefile` for Cppcheck. To build it run:
+Automatically generates the main `Makefile` for Cppcheck (the main `Makefile` should not be modified manually). To build and run the `dmake` tool execute:
 ```shell
 $ cd tools
 $ qmake # Uses tools.pro
