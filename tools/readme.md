@@ -1,6 +1,6 @@
 ## Cppcheck developer and build tools
 
-### matchcompiler.py
+### * tools/matchcompiler.py
 
 The matchcompiler.py script performs a few code transformations to cpp files under the lib/ directory. These transformations are related to the use of `Token::Match()` function and are intented to improve code performance. The transformed files are saved on the build/ directory.
 
@@ -16,7 +16,7 @@ void f2() {
     Token::Match(tok, abc);
 }
 ```
-We run matchcompiler.py:
+Run matchcompiler.py from the main directory:
 ```shell
 $ python tools/matchcompiler.py
 ```
@@ -44,14 +44,30 @@ void f2() {
 }
 ```
 The usage of `Token::Match()` in `f1()` has been optimized, whereas the one in `f2()` couldn't be optimized.
-To compile the transformed code instead of the lib/ code use the `SRCDIR` makefile variable:
+Then, to compile the transformed code instead of the lib/ code, use the `SRCDIR` makefile variable:
 ```shell
 $ make SRCDIR=build
 ```
-### extracttests.py
+### * tools/dmake.cpp
 
-### dmake.cpp
+Automatically generates the main `Makefile` for Cppcheck. To build it run:
+```shell
+$ cd tools
+$ qmake # Uses tools.pro
+$ make
+$ cd ..
+$ tools/dmake # run the dmake from the main directory
+```
 
-### reduce.cpp
+### * tools/reduce.cpp
 
-### times.sh
+Cppcheck tool that reduce code for a hang/false positive. To build the tool run:
+```shell
+# From the main directory
+$ make reduce
+```
+
+### * tools/times.sh
+
+Script to generate a `times.log` file that contains timing information of the last 20 revisions.
+
